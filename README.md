@@ -2,4 +2,4 @@
 Snake game in Python.
 
 Uses the library keyboard.
-  To install, use *pip install keyboard*
+*   To install, use *pip install keyboard*
