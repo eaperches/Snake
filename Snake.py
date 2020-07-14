@@ -16,10 +16,10 @@ import os
 
 class Snake(object):
     
-    def __init__(self, gridSize):        
+    def __init__(self):        
         self.gameOver = False
         self.sleep = 0.5
-        self.x, self.y = gridSize, gridSize
+        self.x, self.y = 10, 10
         self.position = [4, 4]
         self.tail = [self.position[0], self.position[1] - 3]
         self.berry_position = None
@@ -54,7 +54,6 @@ class Snake(object):
             self.berry_position = random.choice(empty_spaces)
             self.grid[self.berry_position[0], self.berry_position[1]] = 'B'
         
-        print(self.position, self.berry_position)
         print(self.grid)
     def key_input(self):
         time_out = self.sleep
@@ -113,5 +112,5 @@ class Snake(object):
             self.logic()
         print('Game Over! Thanks for playing!')
 #------------------ Play
-game = Snake(10)
+game = Snake()
 game.play()
