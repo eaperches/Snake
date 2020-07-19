@@ -25,12 +25,7 @@ class Snake(object):
         self.berry_position = None
         self.grid = None
         self.queue_movements = ['right'] * 3
-        
-        if self.position[1] <= self.y // 2:
-            self.direction = 'right'
-        else:
-            self.direction = 'left'
-            
+        self.direction = 'right'
     
     def draw(self):
         os.system("CLS")
