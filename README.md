@@ -1,5 +1,5 @@
 # Snake
-Snake game in Python.
+Snake game in Python which can be played in console or tkinter UI.
 
 Uses the library keyboard.
 *   To install, use *pip install keyboard*
