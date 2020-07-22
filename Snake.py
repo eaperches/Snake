@@ -35,7 +35,6 @@ class Snake(object):
         self.c = None
         self.pollingms = 10
         
-        
     def draw(self, printConsole = True):
         os.system("CLS")
         #Snake
@@ -60,7 +59,67 @@ class Snake(object):
             
         if printConsole:
             print(self.grid)
+        
+    def key_input(self):
+        time_out = self.sleep
+        start = time.time()
+        new_direction = self.direction
+        pressed = False
+        while(time.time() - start < time_out):
+            if not pressed:
+                if keyboard.is_pressed('up') and self.direction != 'down':
+                    new_direction = 'up'
+                    pressed = True
+                if keyboard.is_pressed('down') and self.direction != 'up':
+                    new_direction = 'down'
+                    pressed = True
+                if keyboard.is_pressed('left') and self.direction != 'right':
+                    new_direction = 'left'
+                    pressed = True
+                if keyboard.is_pressed('right') and self.direction != 'left':
+                    new_direction = 'right'
+                    pressed = True
                 
+        self.direction = new_direction
+        
+        
+    def logic(self):
+        def move(position,direction):
+            new_position = position
+            if direction == 'right':
+                new_position[1] += 1
+            elif direction == 'left':
+                new_position[1] -= 1
+            elif direction == 'up':
+                new_position[0] -= 1
+            elif direction == 'down':
+                new_position[0] += 1
+                
+            return new_position
+                
+        new_position = move(self.position, self.direction)
+        self.queue_movements.append(self.direction)
+        
+        if self.position != self.berry_position:
+            new_tail = move(self.tail, self.queue_movements.pop(0))
+        else:
+            new_tail = self.tail
+        
+        if 0 <= new_position[0] < self.x and 0 <= new_position[1] < self.y and self.grid[new_position[0], new_position[1]] != 'X':
+            self.position = new_position
+            self.tail = new_tail
+        else:
+            self.gameOver = True
+
+    def play(self):
+        while(not self.gameOver):
+            self.draw()
+            self.key_input()
+            self.logic()
+        print('Game Over! Thanks for playing!')
+        
+        
+    #TK-------------------------------------------
     def TKdraw(self):
         def createGrid(event=None):
             c = self.c
@@ -127,29 +186,6 @@ class Snake(object):
             
         self.c.after(self.pollingms, self.TKkey_input)
         
-        
-    def key_input(self):
-        time_out = self.sleep
-        start = time.time()
-        new_direction = self.direction
-        pressed = False
-        while(time.time() - start < time_out):
-            if not pressed:
-                if keyboard.is_pressed('up') and self.direction != 'down':
-                    new_direction = 'up'
-                    pressed = True
-                if keyboard.is_pressed('down') and self.direction != 'up':
-                    new_direction = 'down'
-                    pressed = True
-                if keyboard.is_pressed('left') and self.direction != 'right':
-                    new_direction = 'left'
-                    pressed = True
-                if keyboard.is_pressed('right') and self.direction != 'left':
-                    new_direction = 'right'
-                    pressed = True
-                
-        self.direction = new_direction
-        
     def TKkey_input(self):
         time_out = self.sleep
         start = time.time()
@@ -203,43 +239,6 @@ class Snake(object):
         else:
             self.gameOver = True
             
-        
-        
-    def logic(self):
-        def move(position,direction):
-            new_position = position
-            if direction == 'right':
-                new_position[1] += 1
-            elif direction == 'left':
-                new_position[1] -= 1
-            elif direction == 'up':
-                new_position[0] -= 1
-            elif direction == 'down':
-                new_position[0] += 1
-                
-            return new_position
-                
-        new_position = move(self.position, self.direction)
-        self.queue_movements.append(self.direction)
-        
-        if self.position != self.berry_position:
-            new_tail = move(self.tail, self.queue_movements.pop(0))
-        else:
-            new_tail = self.tail
-        
-        if 0 <= new_position[0] < self.x and 0 <= new_position[1] < self.y and self.grid[new_position[0], new_position[1]] != 'X':
-            self.position = new_position
-            self.tail = new_tail
-        else:
-            self.gameOver = True
-
-    def play(self):
-        while(not self.gameOver):
-            self.draw()
-            self.key_input()
-            self.logic()
-        print('Game Over! Thanks for playing!')
-        
     def TKplay(self):
         self.root = tk.Tk()
         self.draw(False)
