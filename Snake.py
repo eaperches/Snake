@@ -21,20 +21,23 @@ class Snake(object):
     
     def __init__(self):        
         self.gameOver = False
-        self.sleep = 0.5
+        self.sleep = 0.1
         self.snake_length = 3
-        self.x, self.y = 10, 10
+        self.x, self.y = 30, 30
         self.position = [4, 4]
         self.tail = [self.position[0], self.position[1] - self.snake_length]
+        self.direction = 'right'
+        self.queue_movements = ['right'] * self.snake_length
         self.berry_position = None
         self.grid = None
-        self.queue_movements = ['right'] * self.snake_length
-        self.direction = 'right'
+        
+        self.growth = 3
+        self.growth_cd = 0
     
         #TK
         self.c = None
-        self.pollingms = 10
-        
+        self.pollingms = 5
+        self.square_size = 20
     def draw(self, printConsole = True):
         os.system("CLS")
         #Snake
@@ -100,9 +103,13 @@ class Snake(object):
         new_position = move(self.position, self.direction)
         self.queue_movements.append(self.direction)
         
-        if self.position != self.berry_position:
+        if self.position == self.berry_position:
+            self.growth_cd += self.growth
+        
+        if self.growth_cd == 0:
             new_tail = move(self.tail, self.queue_movements.pop(0))
         else:
+            self.growth_cd -= 1
             new_tail = self.tail
         
         if 0 <= new_position[0] < self.x and 0 <= new_position[1] < self.y and self.grid[new_position[0], new_position[1]] != 'X':
@@ -127,12 +134,12 @@ class Snake(object):
             h = c.winfo_height() # Get current height of canvas
             c.delete('grid_line') # Will only remove the grid_line
         
-            # Creates all vertical lines at intevals of 100
-            for i in range(0, w, 100):
+            # Creates all vertical lines at intevals of self.square_size
+            for i in range(0, w, self.square_size):
                 c.create_line([(i, 0), (i, h)], tag='grid_line')
         
-            # Creates all horizontal lines at intevals of 100
-            for i in range(0, h, 100):
+            # Creates all horizontal lines at intevals of self.square_size
+            for i in range(0, h, self.square_size):
                 c.create_line([(0, i), (w, i)], tag='grid_line')
                 
             self.tiles = {}
@@ -140,20 +147,20 @@ class Snake(object):
             for i in range(self.x):
                 for j in range(self.y):
                     if self.grid[i][j] == 'X':
-                        x1, y1 = i*100, j*100
-                        x2, y2 = (i+1)*100, (j+1)*100
+                        x1, y1 = i*self.square_size, j*self.square_size
+                        x2, y2 = (i+1)*self.square_size, (j+1)*self.square_size
                         self.tiles[(i, j)] = c.create_rectangle(y1, x1, y2, x2, fill = "green")
                     elif self.grid[i][j] == 'B':
-                        x1, y1 = i*100, j*100
-                        x2, y2 = (i+1)*100, (j+1)*100
+                        x1, y1 = i*self.square_size, j*self.square_size
+                        x2, y2 = (i+1)*self.square_size, (j+1)*self.square_size
                         self.apple_tiles[(i, j)] = c.create_rectangle(y1, x1, y2, x2, fill = "red")
                 
         def updateGrid(event=None):
             #Snake
             #Update head
             i, j = self.position
-            x1, y1 = i*100, j*100
-            x2, y2 = (i+1)*100, (j+1)*100
+            x1, y1 = i*self.square_size, j*self.square_size
+            x2, y2 = (i+1)*self.square_size, (j+1)*self.square_size
             self.tiles[(i, j)] = self.c.create_rectangle(y1, x1, y2, x2, fill = "green")
             #update tail
             i, j = self.tail
@@ -172,12 +179,12 @@ class Snake(object):
                             empty_spaces.append([i,j])
                 self.berry_position = random.choice(empty_spaces)
                 i, j = self.berry_position
-                x1, y1 = i*100, j*100
-                x2, y2 = (i+1)*100, (j+1)*100
+                x1, y1 = i*self.square_size, j*self.square_size
+                x2, y2 = (i+1)*self.square_size, (j+1)*self.square_size
                 self.apple_tiles[(i, j)] = self.c.create_rectangle(y1, x1, y2, x2, fill = "red")
                     
         if not self.c:
-            self.c = tk.Canvas(self.root, height=self.y*100, width=self.x*100, bg='white')
+            self.c = tk.Canvas(self.root, height=self.y*self.square_size, width=self.x*self.square_size, bg='white')
             self.c.pack(fill=tk.BOTH, expand=True)
             
             self.c.bind('<Configure>', createGrid)
@@ -227,9 +234,13 @@ class Snake(object):
         new_position = move(self.position, self.direction)
         self.queue_movements.append(self.direction)
         
-        if self.position != self.berry_position:
+        if self.position == self.berry_position:
+            self.growth_cd += self.growth
+        
+        if self.growth_cd == 0:
             new_tail = move(self.tail, self.queue_movements.pop(0))
         else:
+            self.growth_cd -= 1
             new_tail = self.tail
         
         if 0 <= new_position[0] < self.x and 0 <= new_position[1] < self.y and tuple(new_position) not in self.tiles:
