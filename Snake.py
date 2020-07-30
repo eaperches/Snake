@@ -20,16 +20,16 @@ import tkinter as tk
 class Snake(object):
     
     def __init__(self):        
-        self.gameOver = False
         self.sleep = 0.1
+        self.x, self.y = 20,20
         self.snake_length = 3
-        self.x, self.y = 30, 30
         self.position = [4, 4]
         self.tail = [self.position[0], self.position[1] - self.snake_length]
         self.direction = 'right'
         self.queue_movements = ['right'] * self.snake_length
         self.berry_position = None
         self.grid = None
+        self.gameOver = False
         
         self.growth = 3
         self.growth_cd = 0
@@ -189,7 +189,7 @@ class Snake(object):
             
             self.c.bind('<Configure>', createGrid)
         else:
-            self.c.after(self.pollingms, updateGrid)
+            self.c.after(0, updateGrid)
             
         self.c.after(self.pollingms, self.TKkey_input)
         
