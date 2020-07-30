@@ -257,8 +257,10 @@ class Snake(object):
         self.root.mainloop()
         
         
+        
 
 #------------------ Play
+
 game = Snake()
 #game.play() #play in console
 game.TKplay() #play with tkinter
