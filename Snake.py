@@ -13,6 +13,7 @@ import time
 import random
 import numpy as np
 import os
+import gc
 
 from PIL import Image, ImageTk
 import tkinter as tk
@@ -23,7 +24,7 @@ class Snake(object):
         self.sleep = 0.1
         self.x, self.y = 20,20
         self.snake_length = 3
-        self.position = [4, 4]
+        self.position = [int(self.x // 2), int(self.y // 2) - 2]
         self.tail = [self.position[0], self.position[1] - self.snake_length]
         self.direction = 'right'
         self.queue_movements = ['right'] * self.snake_length
@@ -142,18 +143,24 @@ class Snake(object):
             for i in range(0, h, self.square_size):
                 c.create_line([(0, i), (w, i)], tag='grid_line')
                 
+            #snake
             self.tiles = {}
-            self.apple_tiles = {}
+            empty_tiles = []
             for i in range(self.x):
                 for j in range(self.y):
-                    if self.grid[i][j] == 'X':
+                    if i == self.position[0] and self.position[1] - self.snake_length < j <= self.position[1]:
                         x1, y1 = i*self.square_size, j*self.square_size
                         x2, y2 = (i+1)*self.square_size, (j+1)*self.square_size
                         self.tiles[(i, j)] = c.create_rectangle(y1, x1, y2, x2, fill = "green")
-                    elif self.grid[i][j] == 'B':
-                        x1, y1 = i*self.square_size, j*self.square_size
-                        x2, y2 = (i+1)*self.square_size, (j+1)*self.square_size
-                        self.apple_tiles[(i, j)] = c.create_rectangle(y1, x1, y2, x2, fill = "red")
+                    else: 
+                        empty_tiles.append([i,j])
+            #berry
+            self.apple_tiles = {}
+            self.berry_position = random.choice(empty_tiles)
+            i, j = self.berry_position[0], self.berry_position[1]
+            x1, y1 = i*self.square_size, j*self.square_size
+            x2, y2 = (i+1)*self.square_size, (j+1)*self.square_size
+            self.apple_tiles[(i, j)] = c.create_rectangle(y1, x1, y2, x2, fill = "red")
                 
         def updateGrid(event=None):
             #Snake
@@ -249,10 +256,10 @@ class Snake(object):
             self.c.after(self.pollingms, self.TKdraw)
         else:
             self.gameOver = True
+            self.c.after(self.pollingms, self.root.destroy())
             
     def TKplay(self):
         self.root = tk.Tk()
-        self.draw(False)
         self.TKdraw()
         self.root.mainloop()
         
