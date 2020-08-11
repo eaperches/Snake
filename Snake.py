@@ -26,8 +26,6 @@ class Snake(object):
         # Game Advanced Settings
         self.snake_length = 3
         self.position = [int(self.x // 2), int(self.y // 2) - 2]
-        self.tail = [self.position[0], self.position[1] - self.snake_length]
-        self.direction = 'right'
         self.growth = 3
         # TK settings
         self.c = None
@@ -35,6 +33,8 @@ class Snake(object):
         self.square_size = 20
         self.growth_cd = 0
         # Do not touch this
+        self.direction = 'right'
+        self.tail = [self.position[0], self.position[1] - self.snake_length]
         self.queue_movements = [self.direction] * self.snake_length
         self.berry_position = None
         self.grid = None
